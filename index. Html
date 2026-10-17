@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Platform - Register</title>
+  <!-- Vue 3 और CDN स्टाइल्स -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    body { background-color: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .app-container { width: 100%; max-width: 420px; padding: 24px; background: #1e293b; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    h2 { font-size: 22px; margin-bottom: 20px; text-align: center; color: #38bdf8; }
+    .form-group { margin-bottom: 16px; }
+    label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px; background: #334155; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 15px; outline: none; }
+    input:focus { border-color: #38bdf8; }
+    .btn-submit { width: 100%; padding: 14px; background: #0284c7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .btn-submit:hover { background: #0369a1; }
+    .footer-link { text-align: center; margin-top: 15px; font-size: 13px; color: #64748b; }
+    .footer-link a { color: #38bdf8; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div id="app" class="app-container">
+  <h2>AI Cloud System</h2>
+  
+  <form @submit.prevent="handleRegister">
+    <div class="form-group">
+      <label>Mobile Number / Username</label>
+      <input type="text" v-model="formData.username" placeholder="Enter mobile or username" required>
+    </div>
+
+    <div class="form-group">
+      <label>Login Password</label>
+      <input type="password" v-model="formData.password" placeholder="Set a password" required>
+    </div>
+
+    <div class="form-group">
+      <label>Invitation Code (Referral)</label>
+      <!-- URL से ऑटोमैटिक भरा जाने वाला कोड -->
+      <input type="text" v-model="formData.inviteCode" placeholder="Invite Code" readonly style="background: #1e293b; color: #38bdf8;">
+    </div>
+
+    <button type="submit" class="btn-submit">Instant Register</button>
+  </form>
+
+  <div class="footer-link">
+    Already have an account? <a href="#">Login</a>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  createApp({
+    data() {
+      return {
+        formData: {
+          username: '',
+          password: '',
+          inviteCode: ''
+        }
+      }
+    },
+    mounted() {
+      // URL से ?query={"id":"7275337"} को पार्स करने का लॉजिक
+      this.extractInviteCode();
+    },
+    methods: {
+      extractInviteCode() {
+        try {
+          const hash = window.location.hash; // #/pages/register/index?query=...
+          const queryString = hash.split('?')[1];
+          if (queryString) {
+            const urlParams = new URLSearchParams(queryString);
+            const queryData = urlParams.get('query');
+            if (queryData) {
+              const parsed = JSON.parse(decodeURIComponent(queryData));
+              this.formData.inviteCode = parsed.id || '';
+            }
+          }
+        } catch (e) {
+          console.log("No valid JSON invite code found");
+        }
+      },
+      handleRegister() {
+        // असली स्कैमर्स यहाँ बैकएंड API पर डेटा भेजते हैं
+        console.log("Submitting payload:", this.formData);
+        alert(`Account created for ${this.formData.username} under inviter ID: ${this.formData.inviteCode}! Fake wallet balance credited: ₹500 😂`);
+      }
+    }
+  }).mount('#app');
+</script>
+
+</body>
+</html>
